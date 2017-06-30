@@ -76,8 +76,8 @@ class Users extends CI_Controller
 		if($this->input->post('register_submit')){
 			$this->form_validation->set_rules('firstname', 'First name', 'required');
 			$this->form_validation->set_rules('lastname', 'Last name', 'required');
-			$this->form_validation->set_rules('email', 'Email', 'required|valid_email');
-			$this->form_validation->set_rules('phone', 'Phone number', 'required');
+			$this->form_validation->set_rules('email', 'Email', 'required|valid_email|is_unique[users.email]', ['is_unique'=>'The email address already exists']);
+			$this->form_validation->set_rules('phone', 'Phone number', 'required|is_unique[users.phone]', ['is_unique'=>'The phone number already exists']);
 			$this->form_validation->set_rules('password', 'password', 'required');
 			$this->form_validation->set_rules('password_confirm', 'Confirm Password', 'required|matches[password]');
 
@@ -85,7 +85,7 @@ class Users extends CI_Controller
 				'firstname' => strip_tags($this->input->post('firstname')),
 				'lastname'  => strip_tags($this->input->post('lastname')),
 				'email' 	=> strip_tags($this->input->post('email')),
-				'phone'		=> strip_tags($this->input->post('phone')),
+				'phone'		=> $this->format_phone_number($this->input->post('phone'), $this->input->post('phone_pref')),
 				'password'	=> md5($this->input->post('password'))
 			);
 
@@ -99,14 +99,20 @@ class Users extends CI_Controller
 				}
 			}
 		}
+
+		$countries = file_get_contents('https://restcountries.eu/rest/v2/all');
+		$data['title'] = 'Register';
+		$data['countries'] = json_decode($countries);
+
+		$this->load->view('user/register', $data);
 	}
 
-	public function check_email($email){
-		if($this->user->email_exists($email)){
-			$this->form_validation->set_message('check_email', 'The email address already exists');
-			return false;
+	public function format_phone_number($phone, $phone_pref){
+		if(strpos($phone, '0') === 0){
+			return substr_replace(strip_tags($phone), strip_tags($phone_pref), 0, 1);
+		}else{
+			return strip_tags($phone_pref.$phone);
 		}
-		return true;
 	}
 
 	public function get_otp(){
@@ -114,8 +120,12 @@ class Users extends CI_Controller
 			'name'  => $this->security->get_csrf_token_name(),
 			'token' => $this->security->get_csrf_hash()
 		];
-		return '<div class="col-md-4 col-md-offset-4 well otp-box">
-			<form action="'.base_url().'index.php/otp" method="post" id="otp_form">
+		return '
+		<div class="alert alert-success resend_success" style="display: none;"></div>
+
+		<div class="alert alert-danger resend_error" style="display: none;"></div>
+		<div class="col-md-4 col-md-offset-4 well otp-box">
+			<form action="'.base_url('index.php/otp').'" method="post" id="otp_form">
 				<div class="form-group">
 					<label>A code has been sent to your phone number. Enter it below.</label>
 					<input type="text" name="otp" class="form-control">
@@ -124,6 +134,7 @@ class Users extends CI_Controller
 				<input type="hidden" name="otp_submit" value="otp_submit">
 				<input type="hidden" name="'.$csrf['name'].'" value="'.$csrf['token'].'">
 			</form>
+			<div class="text-center"><a id="resend_code" data-resend="'.base_url('index.php/resend-code').'">Resend Code<i style="display:none;" id="resend-progress" class="fa fa-spinner fa-pulse fa-fw"></i></a></div>
 		</div>
 	</div>';
 	}
@@ -157,26 +168,27 @@ class Users extends CI_Controller
 		}
 	}
 
+	public function resend_code(){
+		$user = $this->session->userdata('user');
+		if($this->otp_authenticate($user)){
+			echo 1;
+		}else{
+			echo 0;
+		}
+	}
+
 	public function otp_authenticate($user){
 
 		$customer_id = "FBF971D8-454D-44A8-BAAE-34444A7EDCDD";
 		$api_key = "vdsJxNRsHlTWWZzJDXQopHeEWKvEmYab0BUXnCl6yytva5eksBKaHiq3+xcmR1st16RVZiR+c/R0tuqKSIsYcA==";
 
-		$user_phone = '';
-		if(strpos($user->phone, '0') === 0){
-			$user_phone = substr_replace($user->phone, '254', 0, 1);
-		} else{
-			$user_phone = $user->phone;
-		}
-
 		$verify_code = randomWithNDigits(5);
 
-		$phone_number = $user->phone;
 		$message = "Your verification code is $verify_code";
 		$message_type = "OTP";
 
 		$messaging_client = new MessagingClient($customer_id, $api_key);
-		$response = $messaging_client->message($user_phone, $message, $message_type);
+		$response = $messaging_client->message($user->phone, $message, $message_type);
 
 		$auth = $response->json;
 		if($auth['status']['code'] == 290){

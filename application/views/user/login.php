@@ -19,6 +19,7 @@ $csrf = [
 <div class="row login-wrapper">
 	<div class="col-md-4 col-md-offset-4 well login-box">
 		<form action="<?php echo base_url('index.php/login'); ?>" id="login_form" method="post" data-parsley-validate>
+			<legend>Log in to your account</legend>
 			<div class="form-group">
 				<label>Email</label>
 				<input type="text" name="username" class="form-control" data-parsley-required>

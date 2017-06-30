@@ -32,3 +32,15 @@ textarea.parsley-error {
 .parsley-errors-list.filled {
   opacity: 1;
 }
+
+.help-block1{
+  color: red;
+}
+
+.select-error{
+  border: 1px solid red !important;
+}
+
+#resend_code:hover{
+  cursor: pointer;
+}

@@ -54,11 +54,13 @@ $route['404_override'] = '';
 $route['translate_uri_dashes'] = FALSE;
 
 $route['login']['get'] = 'users/get_login';
-$route['register']['get'] = 'users/get_register';
+$route['login']['post'] = 'users/login';
+
 $route['otp'] = 'users/otp';
 $route['logout']= 'users/logout';
 
-$route['login']['post'] = 'users/login';
-$route['register']['post'] = 'users/register';
+$route['register'] = 'users/register';
+
+$route['resend-code'] = 'users/resend_code';
 
 $route['home']['get'] = 'pages/home';
