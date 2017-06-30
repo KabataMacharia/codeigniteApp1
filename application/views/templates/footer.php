@@ -47,15 +47,18 @@
 					success:  function(data){
 						var dataObj = JSON.parse(data);
 						if('error' in dataObj){
+							$('.alert-success').hide();
 							$('.login-error').html('<strong>Error:</strong> '+dataObj.error).show();
 							$("#login_submit").button('reset');
 						}
 						if('page' in dataObj){
 							$('.login-box').hide();
+							$('.alert').hide();
 							$('.login-wrapper').html(dataObj.page).show();
 						}
 					},
 					error:  function(jqxhr, error){
+						$('.alert-success').hide();
 						$('.login-error').html('An error occurred. Please try again.').show();
 						$("#login_submit").button('reset');
 					}
@@ -103,14 +106,17 @@
 				url:     url,
 				success: function(data){
 					if(data == '1'){
+						$('.alert').hide();
 						$(".resend_success").html('Verification code sent').show();
 						$("#resend-progress").hide();
 					}else{
+						$('.alert').hide();
 						$(".resend_error").html('Sending verification code failed').show();
 						$("#resend-progress").hide();
 					}
 				},
 				error:   function(jqxhr, error){
+					$('.alert').hide();
 					$("#resend_error").html('An error occurred. Please contact the system admin');
 					$("#resend-progress").hide();
 				}
