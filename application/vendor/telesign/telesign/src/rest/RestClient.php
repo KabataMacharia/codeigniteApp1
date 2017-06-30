@@ -50,7 +50,7 @@ class RestClient {
       "timeout" => $timeout,
       "proxy" => $proxy,
       "handler" => $handler,
-      'verify' => getcwd().'/assets/cacert2.pem'
+      'verify' => getcwd().'/assets/cacert.pem'
     ]);
     $sdk_version = VERSION;
     $php_version = PHP_VERSION;
