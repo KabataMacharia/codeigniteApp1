@@ -33,7 +33,11 @@
 							$('.login-box').hide();
 							$('.login-wrapper').html(dataObj.page).show();
 						}
-					} 
+					},
+					error:  function(jqxhr, error){
+						$('.login-error').html('An error occurred. Please try again.').show();
+						$("#login_submit").button('reset');
+					}
 				});
 			}
 			e.preventDefault();
@@ -54,6 +58,10 @@
 					if('success' in dataObj){
 						window.location.replace(dataObj.redirect);
 					}
+				},
+				error:  function(jqxhr, error){
+					$('.login-error').html('An error occurred. Please try again.').show();
+					$("#login_submit").button('reset');
 				} 
 			});
 			e.preventDefault();

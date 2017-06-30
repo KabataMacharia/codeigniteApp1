@@ -49,9 +49,9 @@ class RestClient {
       "base_uri" => $rest_endpoint,
       "timeout" => $timeout,
       "proxy" => $proxy,
-      "handler" => $handler
+      "handler" => $handler,
+      'verify' => getcwd().'/assets/cacert2.pem'
     ]);
-
     $sdk_version = VERSION;
     $php_version = PHP_VERSION;
     $guzzle_version = Client::VERSION;
