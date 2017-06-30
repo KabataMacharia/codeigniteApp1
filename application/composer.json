@@ -1,0 +1,7 @@
+{
+  "description" : "My great CodeIgniter application",
+  "name" : "myApp",
+  "require": {
+    "telesign/telesign": "*"
+  }
+}
