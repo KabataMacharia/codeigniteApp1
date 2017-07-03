@@ -5,10 +5,12 @@
 	'token' => $this->security->get_csrf_hash()
 	];
 ?>
-
-<div class="row">
+<div class="alert alert-danger reg-error" style="display: none;"></div>
+<div class="after-reg-wrapper"></div>
+<div class="row reg-wrapper">
 	<div class="col-md-6 col-md-offset-3 well">
-		<form action="<?php echo base_url("index.php/register"); ?>" method="post" id="register_form" data-parsley-validate>
+		<legend>Create an account</legend>
+		<form action="<?php echo base_url("register"); ?>" method="post" id="register_form" data-parsley-validate>
 			<div class="form-group">
 				<label>First name</label>
 				<input type="text" name="firstname" class="form-control" value="<?php echo set_value('firstname'); ?>" data-parsley-required>
@@ -61,9 +63,13 @@
 				<?php echo form_error('password_confirm','<span class="help-block1">','</span>'); ?>
 			</div>
 			<input type="hidden" name="<?php echo $csrf['name']; ?>" value="<?php echo $csrf['token']; ?>">
-			<input type="submit" name="register_submit" value="Register" id="reg_btn" class="btn btn-primary btn-raised btn-block">
+			<input type="hidden" name="register_submit" value="register_submit">
+		
+			<button type="submit" id="register_submit" data-loading-text="Register <i class='fa fa-spinner fa-pulse fa-fw'></i>" class="btn btn-primary btn-block btn-raised" autocomplete="off">
+			 Register
+			</button>
 		</form>
-		<p class="footInfo">Already have an account? <a href="<?php echo base_url('index.php/login'); ?>">Login here</a></p>
+		<p class="text-center">Already have an account? <a href="<?php echo base_url('login'); ?>">Login here</a></p>
 	</div>
 </div>
 

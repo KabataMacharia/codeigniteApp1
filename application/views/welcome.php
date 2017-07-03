@@ -9,8 +9,8 @@ $this->load->view('templates/header');
 		  <h1>Welcome!</h1>
 		  <p>This is a test application that uses Telesign 2-factor authentication </p>
 		  <p>
-		  	<a class="btn btn-primary btn-raised" href="<?php echo base_url('index.php/login'); ?>" role="button">Log in</a>
-		  	<a class="btn btn-primary btn-raised" href="<?php echo base_url('index.php/register'); ?>" role="button">Register</a>
+		  	<a class="btn btn-primary btn-raised" href="<?php echo base_url('login'); ?>" role="button">Log in</a>
+		  	<a class="btn btn-primary btn-raised" href="<?php echo base_url('register'); ?>" role="button">Register</a>
 		  </p>
 		</div>
 	</div>

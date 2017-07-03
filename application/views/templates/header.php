@@ -41,8 +41,8 @@
         <?php
         	if(!$this->session->userdata('user')){
         ?>
-        	<li><a href="<?php echo base_url('index.php/login') ?>">Login</a></li>
-        	<li><a href="<?php echo base_url('index.php/register') ?>">Register</a></li>
+        	<li><a href="<?php echo base_url('login') ?>">Login</a></li>
+        	<li><a href="<?php echo base_url('register') ?>">Register</a></li>
         <?php
         	}
         ?>
@@ -53,7 +53,7 @@
         	<li class="dropdown">
 	          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><?php echo $user->firstname. " " . $user->lastname; ?><span class="caret"></span></a>
 	          <ul class="dropdown-menu">
-	            <li><a href="<?php echo base_url('index.php/logout') ?>">Logout</a></li>
+	            <li><a href="<?php echo base_url('logout') ?>">Logout</a></li>
 	          </ul>
         	</li>
         <?php } ?>

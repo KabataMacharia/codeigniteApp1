@@ -1,5 +1,4 @@
-
-  	</div>
+	</div>
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
     <!-- Include all compiled plugins (below), or include individual files as needed -->
@@ -12,7 +11,7 @@
 	<script type="text/javascript">
 		$.material.init();
 		$("#country_select").select2({
-			placeholder: "Select a state"
+			placeholder: "Select a country"
 		});
 		$("#country_select").on("select2:select", function(){
 			var url = 'https://restcountries.eu/rest/v2/alpha/'+$("#country_select").val();
@@ -33,7 +32,7 @@
 			$(".select2-container--default .select2-selection--single").removeClass("select-error");
 		});
 
-		$("#login_form").submit(function(e){
+		$(document).on("submit", "#login_form", function(e){
 			var url = $(this).attr('action');
 			var data = $(this).serialize();
 			if(data.indexOf('=&') > -1 || data.substr(data.length - 1) == '='){
@@ -91,10 +90,35 @@
 			e.preventDefault();
 		});
 
-		$("#register_form").submit(function(e){
+		$("#register_form").submit(function(evt){
+			evt.preventDefault();
 			if($("#country_select").val() == ''){
 				$(".select2-container--default .select2-selection--single").addClass("select-error");
-				e.preventDefault();
+			} else{
+				$("#register_submit").button('loading');
+				var data = $(this).find('input[name!=country]').serialize();
+				var url = $(this).attr('action');
+				$.ajax({
+					type:  	  'post',
+					url:   	  url,
+					data:  	  data,
+					success:  function(data){
+						var dataObj = JSON.parse(data);
+						if('error' in dataObj){
+							$('.reg-error').html('An error occurred. Please try again.').show();
+							$("#register_submit").button('reset');
+						}else{
+							$('.reg-error').hide();
+							$('.reg-wrapper').hide();
+							$('.after-reg-wrapper').html(dataObj.page);
+						}
+					},
+					error:    function(jqxhr, error){
+						$('.alert').hide();
+						$("#register_submit").button('reset');
+						$("#resend_error").html('An error occurred. Please contact the system admin');
+					}
+				});
 			}
 		});
 

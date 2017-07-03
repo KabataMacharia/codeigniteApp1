@@ -1,5 +1,7 @@
-<?php 
-$this->load->view('templates/header'); 
+<?php
+if(!$this->session->flashdata('new_reg')){
+	$this->load->view('templates/header'); 
+} 
 
 if(isset($success)){
 ?>
@@ -18,7 +20,7 @@ $csrf = [
 
 <div class="row login-wrapper">
 	<div class="col-md-4 col-md-offset-4 well login-box">
-		<form action="<?php echo base_url('index.php/login'); ?>" id="login_form" method="post" data-parsley-validate>
+		<form action="<?php echo base_url('login'); ?>" id="login_form" method="post" data-parsley-validate>
 			<legend>Log in to your account</legend>
 			<div class="form-group">
 				<label>Email</label>
@@ -40,4 +42,7 @@ $csrf = [
 	</div>
 </div>
 
-<?php $this->load->view('templates/footer'); ?>
+<?php
+if(!$this->session->flashdata('new_reg')){
+	$this->load->view('templates/footer'); 
+}?>

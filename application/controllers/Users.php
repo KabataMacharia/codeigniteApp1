@@ -92,10 +92,15 @@ class Users extends CI_Controller
 			if($this->form_validation->run() == true){
 				$insert = $this->user->create($user_data);
 				if($insert){
-					$this->session->set_userdata('success', 'Registration Successful');
-					redirect('login');
+					//$this->session->set_userdata('success', 'Registration Successful');
+					$this->session->set_flashdata('new_reg', 'true');
+					$data['title'] = 'Login';
+					$data['success'] = 'Registration Successful';
+					$page = $this->load->view('user/login', $data, true);
+					echo json_encode(['page'=>$page]);
+					return;
 				} else{
-					$data['errormsg'] = 'A problem occurred. Please try again';
+					echo json_encode(['error' => 'A problem occurred. Please try again']);
 				}
 			}
 		}
@@ -125,7 +130,7 @@ class Users extends CI_Controller
 
 		<div class="alert alert-danger resend_error" style="display: none;"></div>
 		<div class="col-md-4 col-md-offset-4 well otp-box">
-			<form action="'.base_url('index.php/otp').'" method="post" id="otp_form">
+			<form action="'.base_url('otp').'" method="post" id="otp_form">
 				<div class="form-group">
 					<label>A code has been sent to your phone number. Enter it below.</label>
 					<input type="text" name="otp" class="form-control">
@@ -134,7 +139,7 @@ class Users extends CI_Controller
 				<input type="hidden" name="otp_submit" value="otp_submit">
 				<input type="hidden" name="'.$csrf['name'].'" value="'.$csrf['token'].'">
 			</form>
-			<div class="text-center"><a id="resend_code" data-resend="'.base_url('index.php/resend-code').'">Resend Code<i style="display:none;" id="resend-progress" class="fa fa-spinner fa-pulse fa-fw"></i></a></div>
+			<div class="text-center"><a id="resend_code" data-resend="'.base_url('resend-code').'">Resend Code<i style="display:none;" id="resend-progress" class="fa fa-spinner fa-pulse fa-fw"></i></a></div>
 		</div>
 	</div>';
 	}
@@ -159,7 +164,7 @@ class Users extends CI_Controller
 
 			if($verify_code == $user_code){
 				$this->session->set_userdata('otp_success', 'Authentication successful');
-				$redirect = base_url().'index.php/home';
+				$redirect = base_url('home');
 				echo json_encode(['success'=>'Authentication successful', 'redirect'=>$redirect]);
 			}else{
 				$this->session->set_userdata('otp_error', 'Authentication failed');
