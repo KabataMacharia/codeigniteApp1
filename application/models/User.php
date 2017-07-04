@@ -55,6 +55,15 @@ class User extends CI_Model
 		return $user->firstname." ".$user->lastname;
 	}
 
+	public function get_user_by_remember_me_token($token){
+		$query = $this->db->get_where($this->table, ['remember_me'=>$token]);
+		if($query->row()){
+			return $query->row();
+		}else{
+			return false;
+		}
+	}
+
 	public function token_exists($token){
 		$query = $this->db->get_where($this->table, ['password_reset_token'=>$token]);
 		if($query->row()){
@@ -74,12 +83,16 @@ class User extends CI_Model
 
 			if($query){
 				$link = base_url("reset-password/$token");
-				return '<a href="'.$link.'">'.$link.'</a>';
+				return $link;
 			}else{
 				return false;
 			}
 		}else{
 			return false;
 		}
+	}
+
+	public function create_remember_me_token($email, $token){
+		$this->db->update($this->table, ['remember_me'=>$token], ['email'=>$email]);
 	}
 }

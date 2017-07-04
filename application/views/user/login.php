@@ -32,6 +32,14 @@ $csrf = [
 				<input type="password" name="password" class="form-control" data-parsley-required>
 				<?php echo form_error('password','<span class="help-block">','</span>'); ?>
 			</div>
+			<div class="form-group">
+			  <div class="checkbox">
+			    <label>
+			      <input type="checkbox" name="remember-me"> Remember me
+			    </label>
+			  </div>
+			  <p class="help-block">Do not use this on a public computer</p>
+			</div>
 			<input type="hidden" name="<?php echo $csrf['name']; ?>" value="<?php echo $csrf['token']; ?>">
 			<input type="hidden" name="login_submit" value="login_submit">
 			

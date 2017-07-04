@@ -67,6 +67,7 @@
 		});
 
 		$(document).on('submit', '#otp_form', function(e){
+			$("#otp_submit").button("loading");
 			var url = $('#otp_form').attr('action');
 			$.ajax({
 				type: 	  "POST",
@@ -76,7 +77,7 @@
 					var dataObj = JSON.parse(data);
 					if('error' in dataObj){
 						$('.login-error').html('<strong>Error:</strong> '+dataObj.error).show();
-						$("#login_submit").button('reset');
+						$("#otp_submit").button('reset');
 					}
 					if('success' in dataObj){
 						window.location.replace(dataObj.redirect);
@@ -84,7 +85,7 @@
 				},
 				error:  function(jqxhr, error){
 					$('.login-error').html('An error occurred. Please try again.').show();
-					$("#login_submit").button('reset');
+					$("#otp_submit").button('reset');
 				} 
 			});
 			e.preventDefault();

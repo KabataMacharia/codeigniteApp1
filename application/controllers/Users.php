@@ -12,9 +12,22 @@ class Users extends CI_Controller
 		$this->load->library('form_validation');
 		//$this->load->library('encrypt');
 		$this->load->model('user');
+		$this->load->helper('cookie');
 	}
 
 	public function get_login(){
+		$remember_me = $this->input->cookie('auth_app_remme');
+		if($remember_me){
+			$user = $this->user->get_user_by_remember_me_token($remember_me);
+			if($user){
+				$this->session->set_userdata('user', $user);
+			}
+		}
+
+		if($this->session->userdata('user')){
+			redirect('home');
+		}
+
 		$data = array();
 
 		if($this->session->userdata('success')){
@@ -28,6 +41,7 @@ class Users extends CI_Controller
 		}
 
 		$data['title'] = 'Login';
+		$data['user_cookie'] = $this->input->cookie('auth_app_remme');
 		$this->load->view('user/login', $data);
 	}
 	
@@ -45,11 +59,14 @@ class Users extends CI_Controller
 
 			if($this->form_validation->run() == true){
 				$result = $this->user->verify($user_data);
+
+				if($this->input->post('remember-me')){
+					$this->session->set_userdata('remember_me', 'set');
+				}
+
 				if($result['status']){
-					$this->session->set_userdata('userLogged', true);
-					$this->session->set_userdata('user', $result['user']);
-					
 					if($this->otp_authenticate($result['user'])){
+						$this->session->set_userdata('user', $result['user']);
 						echo json_encode(['page'=>$this->get_otp()]);
 					}else{
 						echo json_encode(['error'=>'Could not send authentication code']);
@@ -126,6 +143,7 @@ class Users extends CI_Controller
 			'name'  => $this->security->get_csrf_token_name(),
 			'token' => $this->security->get_csrf_hash()
 		];
+		$btn_text = "Verifying... <i class='fa fa-spinner fa-pulse fa-fw'></i>";
 		return '
 		<div class="alert alert-success resend_success" style="display: none;"></div>
 
@@ -136,7 +154,9 @@ class Users extends CI_Controller
 					<label>A code has been sent to your phone number. Enter it below.</label>
 					<input type="text" name="otp" class="form-control">
 				</div>
-				<input type="submit" name="otp_submit"  id="otp_submit" value="Verify" class="btn btn-primary btn-block btn-raised">
+				<button type="submit" id="otp_submit" data-loading-text="'.$btn_text.'" class="btn btn-primary btn-block btn-raised" autocomplete="off">
+				  Verify
+				</button>
 				<input type="hidden" name="otp_submit" value="otp_submit">
 				<input type="hidden" name="'.$csrf['name'].'" value="'.$csrf['token'].'">
 			</form>
@@ -147,6 +167,8 @@ class Users extends CI_Controller
 
 	public function otp(){
 		$data = array();
+		$user = $this->session->userdata('user');
+		$this->session->unset_userdata('user');
 		if($this->session->userdata('otp_success')){
 			$data['success'] = $this->session->userdata('otp_success');
 			$this->session->unset_userdata('otp_success');
@@ -165,6 +187,25 @@ class Users extends CI_Controller
 
 			if($verify_code == $user_code){
 				$this->session->set_userdata('otp_success', 'Authentication successful');
+				$this->session->set_userdata('userLogged', true);
+				$this->session->set_userdata('user', $user);
+
+				if($this->session->userdata('remember_me')){
+					$this->session->unset_userdata('remember_me');
+					$factory = new RandomLib\Factory;
+					$generator = $factory->getLowStrengthGenerator();
+					$token = $generator->generateString(32, '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ');
+					$domain = base_url();
+					$this->user->create_remember_me_token($user->email, $token);
+					$cookie = array(
+					        'name'   => 'auth_app_remme',
+					        'value'  => $token,
+					        'expire' => '315360000',
+					        'path'   => '/'
+					);
+					$this->input->set_cookie($cookie);
+				}
+
 				$redirect = base_url('home');
 				echo json_encode(['success'=>'Authentication successful', 'redirect'=>$redirect]);
 			}else{
@@ -208,6 +249,14 @@ class Users extends CI_Controller
 	public function logout(){
 		$this->session->unset_userdata('user');
 		$this->session->unset_userdata('userLogged');
+
+		$cookie = array(
+		        'name'   => 'auth_app_remme',
+		        'value'  => '',
+		        'expire' => '',
+		        'path'   => '/'
+					);
+		$this->input->set_cookie($cookie);
 
 		redirect('welcome');
 	}
