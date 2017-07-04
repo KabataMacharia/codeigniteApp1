@@ -13,12 +13,18 @@ class ComposerStaticInit5a8051ff84db98e4672119de28b5715d
         '37a3dc5111fe8f707ab4c132ef1dbc62' => __DIR__ . '/..' . '/guzzlehttp/guzzle/src/functions_include.php',
         'b50cc3b860dd4b6f4f09e58a8f6b6ce7' => __DIR__ . '/..' . '/telesign/telesign/src/util.php',
         'a1b8cf771c4bf16e62bd369446b431fa' => __DIR__ . '/..' . '/telesign/telesign/src/version/version.php',
+        '3f8bdd3b35094c73a26f0106e3c0f8b2' => __DIR__ . '/..' . '/sendgrid/sendgrid/lib/SendGrid.php',
+        '9dda55337a76a24e949fbcc5d905a2c7' => __DIR__ . '/..' . '/sendgrid/sendgrid/lib/helpers/mail/Mail.php',
     );
 
     public static $prefixLengthsPsr4 = array (
         't' => 
         array (
             'telesign\\sdk\\' => 13,
+        ),
+        'S' => 
+        array (
+            'SendGrid\\' => 9,
         ),
         'R' => 
         array (
@@ -40,6 +46,10 @@ class ComposerStaticInit5a8051ff84db98e4672119de28b5715d
         'telesign\\sdk\\' => 
         array (
             0 => __DIR__ . '/..' . '/telesign/telesign/src',
+        ),
+        'SendGrid\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/sendgrid/php-http-client/lib',
         ),
         'Ramsey\\Uuid\\' => 
         array (
@@ -63,11 +73,29 @@ class ComposerStaticInit5a8051ff84db98e4672119de28b5715d
         ),
     );
 
+    public static $prefixesPsr0 = array (
+        'S' => 
+        array (
+            'SecurityLib' => 
+            array (
+                0 => __DIR__ . '/..' . '/ircmaxell/security-lib/lib',
+            ),
+        ),
+        'R' => 
+        array (
+            'RandomLib' => 
+            array (
+                0 => __DIR__ . '/..' . '/ircmaxell/random-lib/lib',
+            ),
+        ),
+    );
+
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
             $loader->prefixLengthsPsr4 = ComposerStaticInit5a8051ff84db98e4672119de28b5715d::$prefixLengthsPsr4;
             $loader->prefixDirsPsr4 = ComposerStaticInit5a8051ff84db98e4672119de28b5715d::$prefixDirsPsr4;
+            $loader->prefixesPsr0 = ComposerStaticInit5a8051ff84db98e4672119de28b5715d::$prefixesPsr0;
 
         }, null, ClassLoader::class);
     }

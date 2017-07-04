@@ -63,4 +63,8 @@ $route['register'] = 'users/register';
 
 $route['resend-code'] = 'users/resend_code';
 
+$route['forgot-password'] = 'users/forgot_password';
+$route['reset-password/(:any)'] = 'users/get_reset_password/$1';
+$route['reset-password']['post'] = 'users/reset_password';
+
 $route['home']['get'] = 'pages/home';

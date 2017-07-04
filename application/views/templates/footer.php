@@ -146,6 +146,72 @@
 				}
 			});
 		});
+
+		$("#reset-email-form").submit(function(evt){
+			var data = $(this).serialize();
+			if(data.indexOf('=&') > -1 || data.substr(data.length - 1) == '='){
+			   //you've got empty values
+			}else{
+				$("#reset_email_submit").button('loading');
+				var url = $(this).attr('action');
+				$.ajax({
+					type:    'post',
+					url:     url,
+					data:    data,
+					success: function(data){
+						var dataObj = JSON.parse(data);
+						if('error' in dataObj){
+							$('.reset-error').html(dataObj.error).show();
+							$("#reset_email_submit").button('reset');
+						}
+						if('success' in dataObj){
+							$('.reset-error').hide();
+							$("#after-send .alert-success").html(dataObj.success);
+							$("#reset-email-form").hide();
+							$("#after-send").show();
+						}
+					},
+					error:   function(jqxhr, error){
+						$(".reset-error").html('An error occurred. Please contact the administrator');
+						$("#reset_email_submit").button('reset');
+					}
+				});
+			}
+			evt.preventDefault();
+		});
+
+		$("#reset-form").submit(function(e){
+			var data = $(this).serialize();
+			if(data.indexOf('=&') > -1 || data.substr(data.length - 1) == '='){
+			   //you've got empty values
+			}else{
+				$("#reset_submit").button('loading');
+				var url  = $(this).attr('action');
+				$.ajax({
+					type:   'post',
+					url:     url,
+					data:    data,
+					success: function(data){
+						var dataObj = JSON.parse(data);
+						if('error' in dataObj){
+							$(".reset-error").html(dataObj.error).show();
+							$("#reset_submit").button('reset');
+						}
+						if('success' in dataObj){
+							$('.reset-error').hide();
+							$("#after-reset .alert-success").html(dataObj.success);
+							$("#reset-form").hide();
+							$("#after-reset").show();
+						}
+					},
+					error:   function(jqxhr, error){
+						$(".reset-error").html('An error occurred. Please contact the administrator');
+						$("#reset_submit").button('reset');
+					}
+				});
+			}
+			e.preventDefault();
+		});
 	</script>
   </body>
 </html>

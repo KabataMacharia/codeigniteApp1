@@ -39,6 +39,7 @@ $csrf = [
 			  Log in
 			</button>
 		</form>
+		<div class="text-center"><a href="<?php echo base_url('forgot-password')?>">Forgot password?</a></div>
 	</div>
 </div>
 

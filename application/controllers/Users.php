@@ -3,6 +3,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
 use telesign\sdk\messaging\MessagingClient;
 use function telesign\sdk\util\randomWithNDigits;
+
 class Users extends CI_Controller
 {
 
@@ -135,7 +136,7 @@ class Users extends CI_Controller
 					<label>A code has been sent to your phone number. Enter it below.</label>
 					<input type="text" name="otp" class="form-control">
 				</div>
-				<input type="submit" name="otp_submit"  id="otp_submit" value="Submit" class="btn btn-primary btn-block btn-raised">
+				<input type="submit" name="otp_submit"  id="otp_submit" value="Verify" class="btn btn-primary btn-block btn-raised">
 				<input type="hidden" name="otp_submit" value="otp_submit">
 				<input type="hidden" name="'.$csrf['name'].'" value="'.$csrf['token'].'">
 			</form>
@@ -209,5 +210,76 @@ class Users extends CI_Controller
 		$this->session->unset_userdata('userLogged');
 
 		redirect('welcome');
+	}
+
+	public function forgot_password(){
+		if($this->input->post('reset_email_submit')){
+			$this->form_validation->set_rules('reset_email', 'reset_email', 'required|valid_email');
+
+			if($this->form_validation->run() == true){
+				$email = $this->input->post('reset_email');
+
+				if($this->user->email_exists($email)){
+					$username = $this->user->get_username_by_email($email);
+					$link  = $this->user->create_reset_link($email);
+
+					if($link !== false){
+						$from = new SendGrid\Email("Telesign two factor auth app", "anthony.g@mambo.co.ke");
+						$subject = "Your app password reset request";
+						$to = new SendGrid\Email($username, $email);
+						$content = new SendGrid\Content("text/plain", "To reset your password, please click the following link. $link");
+						$mail = new SendGrid\Mail($from, $subject, $to, $content);
+						$sg = new \SendGrid('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');
+						$response = $sg->client->mail()->send()->post($mail);
+						if($response->statusCode() == 202){
+							echo json_encode(['success'=>'Reset password email sent']);
+							return;
+						}else{
+							echo json_encode(['error'=>'Reset password email could not be sent']);
+							return;
+						}
+					}else{
+						echo json_encode(['error'=>'An error occurred. Contact the administator.']);
+						return;
+					}
+				} else{
+					echo json_encode(['error'=>'The email address is not associated with an account']);
+					return;
+				}	
+			}
+		}
+
+		$data['title'] = 'Forgot password';
+
+		return $this->load->view('user/forgotpassword', $data);
+	}
+
+	public function get_reset_password($token){
+		$data['title'] = 'Forgot password';
+		$data['token'] = $token;
+
+		return $this->load->view('user/resetpassword', $data);
+	}
+
+	public function reset_password(){
+		if($this->input->post('reset_submit')){
+			$this->form_validation->set_rules('password', 'password', 'required');
+			$this->form_validation->set_rules('password_confirm', 'password', 'required|matches[password]');
+			//$this->form_validation->set_rules('r_token', 'password reset token', 'required');
+
+			if($this->form_validation->run() == true){
+				$token = strip_tags($this->input->post('r_token'));
+				if($this->user->token_exists($token)){
+					$return = $this->user->reset_password(md5($this->input->post('password')), $token);
+					if($return){
+						echo json_encode(['success'=>'Password saved']);
+					}else{
+						echo json_encode(['error'=>'Your password could not be changed']);
+					}
+				}else{
+					echo json_encode(['error'=>'Invalid password reset token']);
+				}
+			}
+		}
 	}
 }

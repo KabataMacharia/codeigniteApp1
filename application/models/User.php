@@ -39,4 +39,47 @@ class User extends CI_Model
 		}
 		return false;
 	}
+
+	public function reset_password($password, $token){
+		$query = $this->db->update($this->table, ['password'=>$password], ['password_reset_token'=>$token]);
+		if($query){
+			return true;
+		}else{
+			return false;
+		}
+	}
+
+	public function get_username_by_email($email){
+		$query = $this->db->get_where($this->table, ['email'=>$email]);
+		$user = $query->row();
+		return $user->firstname." ".$user->lastname;
+	}
+
+	public function token_exists($token){
+		$query = $this->db->get_where($this->table, ['password_reset_token'=>$token]);
+		if($query->row()){
+			$this->db->update($this->table, ['password_reset_token'=>''], ['password_reset_token'=>$token]);
+			return true;
+		}else{
+			return false;
+		}
+	}
+
+	public function create_reset_link($email){
+		if($this->db->field_exists('password_reset_token', $this->table)){
+			$factory = new RandomLib\Factory;
+			$generator = $factory->getLowStrengthGenerator();
+			$token = $generator->generateString(32, '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ');
+			$query = $this->db->update($this->table, ['password_reset_token'=>$token], ['email'=>$email]);
+
+			if($query){
+				$link = base_url("reset-password/$token");
+				return '<a href="'.$link.'">'.$link.'</a>';
+			}else{
+				return false;
+			}
+		}else{
+			return false;
+		}
+	}
 }

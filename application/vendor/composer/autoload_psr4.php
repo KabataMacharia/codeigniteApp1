@@ -7,6 +7,7 @@ $baseDir = dirname($vendorDir);
 
 return array(
     'telesign\\sdk\\' => array($vendorDir . '/telesign/telesign/src'),
+    'SendGrid\\' => array($vendorDir . '/sendgrid/php-http-client/lib'),
     'Ramsey\\Uuid\\' => array($vendorDir . '/ramsey/uuid/src'),
     'Psr\\Http\\Message\\' => array($vendorDir . '/psr/http-message/src'),
     'GuzzleHttp\\Psr7\\' => array($vendorDir . '/guzzlehttp/psr7/src'),
