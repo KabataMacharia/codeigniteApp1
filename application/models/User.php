@@ -67,11 +67,14 @@ class User extends CI_Model
 	public function token_exists($token){
 		$query = $this->db->get_where($this->table, ['password_reset_token'=>$token]);
 		if($query->row()){
-			$this->db->update($this->table, ['password_reset_token'=>''], ['password_reset_token'=>$token]);
 			return true;
 		}else{
 			return false;
 		}
+	}
+
+	public function destroy_token($token){
+		$this->db->update($this->table, ['password_reset_token'=>''], ['password_reset_token'=>$token]);
 	}
 
 	public function create_reset_link($email){

@@ -62,6 +62,8 @@
 				<input type="password" name="password_confirm" class="form-control" data-parsley-required data-parsley-equalto="#password" data-parsley-equalto-message="Both passwords should be the same">
 				<?php echo form_error('password_confirm','<span class="help-block1">','</span>'); ?>
 			</div>
+			<div class="g-recaptcha" class="form-group" data-sitekey="6Lce-icUAAAAANIBmHxAe3k499rnyKe7DIBO4AbC"></div>
+			<div class="g-errors-list" id="g-recaptcha-error"></div>
 			<input type="hidden" name="<?php echo $csrf['name']; ?>" value="<?php echo $csrf['token']; ?>">
 			<input type="hidden" name="register_submit" value="register_submit">
 		

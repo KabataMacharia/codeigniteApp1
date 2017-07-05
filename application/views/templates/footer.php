@@ -8,6 +8,8 @@
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/parsley.js/2.7.2/parsley.min.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/js/select2.min.js"></script>
 
+	<script src="https://www.google.com/recaptcha/api.js" async defer></script>
+
 	<script type="text/javascript">
 		$.material.init();
 		$("#country_select").select2({
@@ -95,10 +97,14 @@
 			evt.preventDefault();
 			if($("#country_select").val() == ''){
 				$(".select2-container--default .select2-selection--single").addClass("select-error");
+			}else if($("#g-recaptcha-response").val() == ''){
+				$("#g-recaptcha-error").html("Please verify you are human").show();
 			} else{
+				$("#g-recaptcha-error").html("Please verify you are human").hide();
 				$("#register_submit").button('loading');
-				var data = $(this).find('input[name!=country]').serialize();
+				var data = $(this).serialize();
 				var url = $(this).attr('action');
+				console.log(data);
 				$.ajax({
 					type:  	  'post',
 					url:   	  url,
@@ -106,7 +112,7 @@
 					success:  function(data){
 						var dataObj = JSON.parse(data);
 						if('error' in dataObj){
-							$('.reg-error').html('An error occurred. Please try again.').show();
+							$('.reg-error').html(dataObj.error).show();
 							$("#register_submit").button('reset');
 						}else{
 							$('.reg-error').hide();

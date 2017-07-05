@@ -13,6 +13,7 @@ class Users extends CI_Controller
 		//$this->load->library('encrypt');
 		$this->load->model('user');
 		$this->load->helper('cookie');
+		$this->config->load('custom_variables');
 	}
 
 	public function get_login(){
@@ -98,6 +99,15 @@ class Users extends CI_Controller
 			$this->form_validation->set_rules('phone', 'Phone number', 'required|is_unique[users.phone]', ['is_unique'=>'The phone number already exists']);
 			$this->form_validation->set_rules('password', 'password', 'required');
 			$this->form_validation->set_rules('password_confirm', 'Confirm Password', 'required|matches[password]');
+			$this->form_validation->set_rules('g-recaptcha-response', 'Verify you are human', 'required');
+
+			$g_recaptcha = $this->input->post('g-recaptcha-response');
+			$g_response = file_get_contents("https://www.google.com/recaptcha/api/siteverify?secret=6Lce-icUAAAAAKu6EP4tKa3_bfIk1JN1QewmR8LJ&response=$g_recaptcha");
+			$g_response = json_decode($g_response, true);
+			if($g_response["success"] !== true){
+				echo json_encode(['error'=>'Verify that you are human']);
+				return;
+			}
 
 			$user_data = array(
 				'firstname' => strip_tags($this->input->post('firstname')),
@@ -271,14 +281,18 @@ class Users extends CI_Controller
 				if($this->user->email_exists($email)){
 					$username = $this->user->get_username_by_email($email);
 					$link  = $this->user->create_reset_link($email);
+					$sendgrid_key = $this->config->item('sendgrid_key');
 
 					if($link !== false){
+						$data['username'] = $username;
+						$data['link'] = $link;
+						$email_page = $this->load->view('emails/password_reset',$data, true);
 						$from = new SendGrid\Email("Telesign two factor auth app", "anthony.g@mambo.co.ke");
 						$subject = "Your app password reset request";
 						$to = new SendGrid\Email($username, $email);
-						$content = new SendGrid\Content("text/plain", "To reset your password, please click the following link. $link");
+						$content = new SendGrid\Content("text/html", $email_page);
 						$mail = new SendGrid\Mail($from, $subject, $to, $content);
-						$sg = new \SendGrid('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');
+						$sg = new \SendGrid($sendgrid_key);
 						$response = $sg->client->mail()->send()->post($mail);
 						if($response->statusCode() == 202){
 							echo json_encode(['success'=>'Reset password email sent']);
@@ -321,6 +335,7 @@ class Users extends CI_Controller
 				if($this->user->token_exists($token)){
 					$return = $this->user->reset_password(md5($this->input->post('password')), $token);
 					if($return){
+						$this->user->destroy_token($token);
 						echo json_encode(['success'=>'Password saved']);
 					}else{
 						echo json_encode(['error'=>'Your password could not be changed']);
