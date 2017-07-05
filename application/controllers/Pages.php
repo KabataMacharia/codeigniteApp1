@@ -15,11 +15,4 @@ class Pages extends CI_Controller
 		
 		$this->load->view('home', $data);
 	}
-
-	public function passemail(){
-		$data['username'] = 'Anthony Githinji';
-		$data['link'] = 'http://localhost/codeapp1';
-		
-		$this->load->view('emails/password_reset', $data);
-	}
 }
