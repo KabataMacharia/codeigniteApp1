@@ -16,8 +16,4 @@ class Pages extends CI_Controller
 		
 		$this->load->view('home', $data);
 	}
-
-	public function profile(){
-		echo 'You are here--->';
-	}
 }

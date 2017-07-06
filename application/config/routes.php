@@ -68,4 +68,3 @@ $route['reset-password/(:any)'] = 'users/get_reset_password/$1';
 $route['reset-password']['post'] = 'users/reset_password';
 
 $route['home']['get'] = 'pages/home';
-$route['profile']['get'] = 'pages/profile';
