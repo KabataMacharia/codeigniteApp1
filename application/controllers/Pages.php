@@ -6,6 +6,7 @@ class Pages extends CI_Controller
 	public function __construct(){
 		parent::__construct();
 		if(!$this->session->userdata('user')){
+			$this->session->set_userdata('redirect_url_login', current_url());
 			redirect('login');
 		}
 	}
@@ -14,5 +15,9 @@ class Pages extends CI_Controller
 		$data['title'] = 'Home';
 		
 		$this->load->view('home', $data);
+	}
+
+	public function profile(){
+		echo 'You are here--->';
 	}
 }

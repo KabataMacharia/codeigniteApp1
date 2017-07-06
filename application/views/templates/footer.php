@@ -161,6 +161,7 @@
 			}else{
 				$("#reset_email_submit").button('loading');
 				var url = $(this).attr('action');
+				$('.reset-error').hide();
 				$.ajax({
 					type:    'post',
 					url:     url,

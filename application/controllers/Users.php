@@ -158,19 +158,21 @@ class Users extends CI_Controller
 		<div class="alert alert-success resend_success" style="display: none;"></div>
 
 		<div class="alert alert-danger resend_error" style="display: none;"></div>
-		<div class="col-md-4 col-md-offset-4 well otp-box">
-			<form action="'.base_url('otp').'" method="post" id="otp_form">
-				<div class="form-group">
-					<label>A code has been sent to your phone number. Enter it below.</label>
-					<input type="text" name="otp" class="form-control">
-				</div>
-				<button type="submit" id="otp_submit" data-loading-text="'.$btn_text.'" class="btn btn-primary btn-block btn-raised" autocomplete="off">
-				  Verify
-				</button>
-				<input type="hidden" name="otp_submit" value="otp_submit">
-				<input type="hidden" name="'.$csrf['name'].'" value="'.$csrf['token'].'">
-			</form>
-			<div class="text-center"><a id="resend_code" data-resend="'.base_url('resend-code').'">Resend Code<i style="display:none;" id="resend-progress" class="fa fa-spinner fa-pulse fa-fw"></i></a></div>
+		<div class="col-md-4 col-md-offset-4 otp-box">
+			<div class="well">
+				<form action="'.base_url('otp').'" method="post" id="otp_form">
+					<div class="form-group">
+						<label>A code has been sent to your phone number. Enter it below.</label>
+						<input type="text" name="otp" class="form-control">
+					</div>
+					<button type="submit" id="otp_submit" data-loading-text="'.$btn_text.'" class="btn btn-primary btn-block btn-raised" autocomplete="off">
+					  Verify
+					</button>
+					<input type="hidden" name="otp_submit" value="otp_submit">
+					<input type="hidden" name="'.$csrf['name'].'" value="'.$csrf['token'].'">
+				</form>
+				<div class="text-center"><a id="resend_code" data-resend="'.base_url('resend-code').'">Resend Code<i style="display:none;" id="resend-progress" class="fa fa-spinner fa-pulse fa-fw"></i></a></div>
+			</div>
 		</div>
 	</div>';
 	}
@@ -215,8 +217,12 @@ class Users extends CI_Controller
 					);
 					$this->input->set_cookie($cookie);
 				}
-
-				$redirect = base_url('home');
+				if($this->session->userdata('redirect_url_login')){
+					$redirect = $this->session->userdata('redirect_url_login');
+					$this->session->unset_userdata('redirect_url_login');
+				}else{
+					$redirect = base_url('home');
+				}
 				echo json_encode(['success'=>'Authentication successful', 'redirect'=>$redirect]);
 			}else{
 				$this->session->set_userdata('otp_error', 'Authentication failed');
