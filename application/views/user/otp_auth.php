@@ -1,4 +1,5 @@
-<div class="col-md-4 col-md-offset-4 well otp-box">
+<div class="col-md-4 col-md-offset-4 otp-box">
+	<div class="well">
 		<form action="" method="post">
 			<div class="form-group">
 				<label>A code has been sent to your phone number. Enter it below.</label>
