@@ -5,11 +5,11 @@
 	'token' => $this->security->get_csrf_hash()
 	];
 ?>
-<div class="alert alert-danger reg-error" style="display: none;"></div>
 <div class="after-reg-wrapper"></div>
 <div class="row reg-wrapper">
 	<div class="col-md-6 col-md-offset-3">
 		<div class="well">
+			<div class="alert alert-danger reg-error" style="display: none;"></div>
 			<legend>Create an account</legend>
 			<form action="<?php echo base_url("register"); ?>" method="post" id="register_form" data-parsley-validate>
 				<div class="form-group">
@@ -73,6 +73,44 @@
 				</button>
 			</form>
 			<p class="text-center">Already have an account? <a href="<?php echo base_url('login'); ?>">Login here</a></p>
+		</div>
+	</div>
+</div>
+
+<div class="row login-wrapper" style="display:none;">
+	<div class="col-md-4 col-md-offset-4 login-box">
+		<div class="well">
+			<div class="alert alert-success reg-success" style="display: none;"></div>
+			<div class="alert alert-success login-success" style="display: none;"></div>
+			<div class="alert alert-danger login-error" style="display: none;"></div>
+			<form action="<?php echo base_url('login'); ?>" id="login_form" method="post" data-parsley-validate>
+				<legend>Log in to your account</legend>
+				<div class="form-group">
+					<label>Email</label>
+					<input type="text" name="username" class="form-control" data-parsley-required>
+					<?php echo form_error('username','<span class="help-block">','</span>'); ?>
+				</div>
+				<div class="form-group">
+					<label>Password</label>
+					<input type="password" name="password" class="form-control" data-parsley-required>
+					<?php echo form_error('password','<span class="help-block">','</span>'); ?>
+				</div>
+				<div class="form-group">
+				  <div class="checkbox">
+				    <label>
+				      <input type="checkbox" name="remember-me"> Remember me
+				    </label>
+				  </div>
+				  <p class="help-block">Do not use this on a public computer</p>
+				</div>
+				<input type="hidden" name="<?php echo $csrf['name']; ?>" value="<?php echo $csrf['token']; ?>">
+				<input type="hidden" name="login_submit" value="login_submit">
+				
+				<button type="submit" id="login_submit" data-loading-text="Logging you in <i class='fa fa-spinner fa-pulse fa-fw'></i>" class="btn btn-primary btn-block btn-raised" autocomplete="off">
+				  Log in
+				</button>
+			</form>
+			<div class="text-center"><a href="<?php echo base_url('forgot-password')?>">Forgot password?</a></div>
 		</div>
 	</div>
 </div>

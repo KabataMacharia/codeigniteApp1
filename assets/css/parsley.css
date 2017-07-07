@@ -58,3 +58,8 @@ textarea.parsley-error {
 #resend_code:hover{
   cursor: pointer;
 }
+
+.btn:disabled{
+  color: rgba(255, 255, 255, 0.73) !important;
+  background-color: rgba(0, 150, 136, 0.79) !important;
+}

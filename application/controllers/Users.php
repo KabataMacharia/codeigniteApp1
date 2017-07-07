@@ -122,11 +122,12 @@ class Users extends CI_Controller
 				$insert = $this->user->create($user_data);
 				if($insert){
 					//$this->session->set_userdata('success', 'Registration Successful');
-					$this->session->set_flashdata('new_reg', 'true');
-					$data['title'] = 'Login';
-					$data['success'] = 'Registration Successful';
-					$page = $this->load->view('user/login', $data, true);
-					echo json_encode(['page'=>$page]);
+					//$this->session->set_flashdata('new_reg', 'true');
+					//$data['title'] = 'Login';
+					//$data['success'] = 'Registration Successful';
+					//$page = $this->load->view('user/login', $data, true);
+					//echo json_encode(['page'=>$page]);
+					echo json_encode(['success'=>'Registration Successful']);
 					return;
 				} else{
 					echo json_encode(['error' => 'A problem occurred. Please try again']);
@@ -156,11 +157,10 @@ class Users extends CI_Controller
 		];
 		$btn_text = "Verifying... <i class='fa fa-spinner fa-pulse fa-fw'></i>";
 		return '
-		<div class="alert alert-success resend_success" style="display: none;"></div>
-
-		<div class="alert alert-danger resend_error" style="display: none;"></div>
 		<div class="col-md-4 col-md-offset-4 otp-box">
 			<div class="well">
+				<div class="alert alert-success resend_success" style="display: none;"></div>
+				<div class="alert alert-danger resend_error" style="display: none;"></div>
 				<form action="'.base_url('otp').'" method="post" id="otp_form">
 					<div class="form-group">
 						<label>A code has been sent to your phone number. Enter it below.</label>
@@ -181,7 +181,7 @@ class Users extends CI_Controller
 	public function otp(){
 		$data = array();
 		$user = $this->session->userdata('user');
-		$this->session->unset_userdata('user');
+		//$this->session->unset_userdata('user');
 		if($this->session->userdata('otp_success')){
 			$data['success'] = $this->session->userdata('otp_success');
 			$this->session->unset_userdata('otp_success');
@@ -201,7 +201,7 @@ class Users extends CI_Controller
 			if($verify_code == $user_code){
 				$this->session->set_userdata('otp_success', 'Authentication successful');
 				$this->session->set_userdata('userLogged', true);
-				$this->session->set_userdata('user', $user);
+				//$this->session->set_userdata('user', $user);
 
 				if($this->session->userdata('remember_me')){
 					$this->session->unset_userdata('remember_me');

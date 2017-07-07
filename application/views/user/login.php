@@ -3,24 +3,20 @@ if(!$this->session->flashdata('new_reg')){
 	$this->load->view('templates/header'); 
 } 
 
-if(isset($success)){
-?>
-<div class="alert alert-success"><?php echo $success ?></div>
-<?php
-}
 $csrf = [
 	'name'  => $this->security->get_csrf_token_name(),
 	'token' => $this->security->get_csrf_hash()
 	];
 ?>
 
-<div class="alert alert-success login-success" style="display: none;"></div>
-
-<div class="alert alert-danger login-error" style="display: none;"></div>
-
 <div class="row login-wrapper">
 	<div class="col-md-4 col-md-offset-4 login-box">
 		<div class="well">
+			<?php if(isset($success)){ ?>
+				<div class="alert alert-success"><?php echo $success ?></div>
+			<?php } ?>
+			<div class="alert alert-success login-success" style="display: none;"></div>
+			<div class="alert alert-danger login-error" style="display: none;"></div>
 			<form action="<?php echo base_url('login'); ?>" id="login_form" method="post" data-parsley-validate>
 				<legend>Log in to your account</legend>
 				<div class="form-group">

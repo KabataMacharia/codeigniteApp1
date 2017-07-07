@@ -49,7 +49,12 @@
 						var dataObj = JSON.parse(data);
 						if('error' in dataObj){
 							$('.alert-success').hide();
-							$('.login-error').html('<strong>Error:</strong> '+dataObj.error).show();
+							$('.login-error').html('<strong>Error:</strong> '+dataObj.error).fadeIn();
+							window.setTimeout(function() {
+							    $(".login-error").fadeOut().slideUp(500, function(){
+							        $(this).hide(); 
+							    });
+							}, 3000);
 							$("#login_submit").button('reset');
 						}
 						if('page' in dataObj){
@@ -60,7 +65,12 @@
 					},
 					error:  function(jqxhr, error){
 						$('.alert-success').hide();
-						$('.login-error').html('An error occurred. Please try again.').show();
+						$('.login-error').html('An error occurred. Please try again.').fadeIn();
+						window.setTimeout(function() {
+							    $(".login-error").fadeOut().slideUp(500, function(){
+							        $(this).hide(); 
+							    });
+							}, 3000);
 						$("#login_submit").button('reset');
 					}
 				});
@@ -78,7 +88,12 @@
 				success:  function(data){
 					var dataObj = JSON.parse(data);
 					if('error' in dataObj){
-						$('.login-error').html('<strong>Error:</strong> '+dataObj.error).show();
+						$('.resend_error').html('<strong>Error:</strong> '+dataObj.error).fadeIn();
+						window.setTimeout(function() {
+							    $(".resend_error").fadeOut().slideUp(500, function(){
+							        $(this).hide(); 
+							    });
+							}, 3000);
 						$("#otp_submit").button('reset');
 					}
 					if('success' in dataObj){
@@ -86,7 +101,12 @@
 					}
 				},
 				error:  function(jqxhr, error){
-					$('.login-error').html('An error occurred. Please try again.').show();
+					$('.resend_error').html('An error occurred. Please try again.').fadeIn();
+					window.setTimeout(function() {
+							    $(".resend_error").fadeOut().slideUp(500, function(){
+							        $(this).hide(); 
+							    });
+							}, 3000);
 					$("#otp_submit").button('reset');
 				} 
 			});
@@ -105,7 +125,7 @@
 			}else if(data.indexOf('=&') > -1 || data.substr(data.length - 1) == '='){
 			   //you've got empty values
 			   console.log("You've got empty values");
-			}else{
+			}else if($(this).parsley().isValid()){
 				$("#g-recaptcha-error").html("Please verify you are human").hide();
 				$("#register_submit").button('loading');
 				var url = $(this).attr('action');
@@ -116,12 +136,23 @@
 					success:  function(data){
 						var dataObj = JSON.parse(data);
 						if('error' in dataObj){
-							$('.reg-error').html(dataObj.error).show();
+							$('.reg-error').html(dataObj.error).fadeIn();
+							window.setTimeout(function() {
+							    $(".reg-error").fadeOut().slideUp(500, function(){
+							        $(this).hide(); 
+							    });
+							}, 3000);
 							$("#register_submit").button('reset');
 						}else{
 							$('.reg-error').hide();
 							$('.reg-wrapper').hide();
-							$('.after-reg-wrapper').html(dataObj.page);
+							$('.reg-success').html(dataObj.success).fadeIn();
+							window.setTimeout(function() {
+							    $(".reg-success").fadeOut().slideUp(500, function(){
+							        $(this).hide(); 
+							    });
+							}, 3000);
+							$('.login-wrapper').show();
 						}
 					},
 					error:    function(jqxhr, error){
@@ -150,11 +181,21 @@
 				success: function(data){
 					if(data == '1'){
 						$('.alert').hide();
-						$(".resend_success").html('Verification code sent').show();
+						$(".resend_success").html('Verification code sent').fadeIn();
+						window.setTimeout(function() {
+							    $(".resend_success").fadeOut().slideUp(500, function(){
+							        $(this).hide(); 
+							    });
+							}, 3000);
 						$("#resend-progress").hide();
 					}else{
 						$('.alert').hide();
-						$(".resend_error").html('Sending verification code failed').show();
+						$(".resend_error").html('Sending verification code failed').fadeIn();
+						window.setTimeout(function() {
+							    $(".resend_error").fadeOut().slideUp(500, function(){
+							        $(this).hide(); 
+							    });
+							}, 3000);
 						$("#resend-progress").hide();
 					}
 				},
@@ -181,7 +222,12 @@
 					success: function(data){
 						var dataObj = JSON.parse(data);
 						if('error' in dataObj){
-							$('.reset-error').html(dataObj.error).show();
+							$('.reset-error').html(dataObj.error).fadeIn();
+							window.setTimeout(function() {
+							    $(".reset-error").fadeOut().slideUp(500, function(){
+							        $(this).hide(); 
+							    });
+							}, 3000);
 							$("#reset_email_submit").button('reset');
 						}
 						if('success' in dataObj){
@@ -214,7 +260,12 @@
 					success: function(data){
 						var dataObj = JSON.parse(data);
 						if('error' in dataObj){
-							$(".reset-error").html(dataObj.error).show();
+							$(".reset-error").html(dataObj.error).fadeIn();
+							window.setTimeout(function() {
+							    $(".reset-error").fadeOut().slideUp(500, function(){
+							        $(this).hide(); 
+							    });
+							}, 3000);
 							$("#reset_submit").button('reset');
 						}
 						if('success' in dataObj){

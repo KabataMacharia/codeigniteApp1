@@ -6,10 +6,11 @@ $csrf = [
 	'token' => $this->security->get_csrf_hash()
 	];
 ?>
-<div class="alert alert-danger reset-error" style="display: none;"></div>
+
 <div class="row">
 	<div class="col-md-4 col-md-offset-4">
 		<div class="well">
+			<div class="alert alert-danger reset-error" style="display: none;"></div>
 			<form action="<?php echo base_url('reset-password'); ?>" method="post" id="reset-form" data-parsley-validate>
 				<legend>Enter your new password</legend>
 				<div class="form-group">
