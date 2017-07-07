@@ -22,10 +22,11 @@ class Users extends CI_Controller
 			$user = $this->user->get_user_by_remember_me_token($remember_me);
 			if($user){
 				$this->session->set_userdata('user', $user);
+				$this->session->set_userdata('userLogged', true);
 			}
 		}
 
-		if($this->session->userdata('user')){
+		if($this->session->userdata('user') && $this->session->userdata('userLogged')){
 			redirect('home');
 		}
 

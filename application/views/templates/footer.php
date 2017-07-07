@@ -94,17 +94,21 @@
 		});
 
 		$("#register_form").submit(function(evt){
-			evt.preventDefault();
-			if($("#country_select").val() == ''){
-				$(".select2-container--default .select2-selection--single").addClass("select-error");
-			}else if($("#g-recaptcha-response").val() == ''){
-				$("#g-recaptcha-error").html("Please verify you are human").show();
-			} else{
+			var data = $(this).serialize();
+			if($("#g-recaptcha-response").val() == '' || $("#country_select").val() == ''){
+				if($("#country_select").val() == ''){
+					$(".select2-container--default .select2-selection--single").addClass("select-error");
+				}
+				if($("#g-recaptcha-response").val() == ''){
+					$("#g-recaptcha-error").html("Please verify you are human").show();
+				}
+			}else if(data.indexOf('=&') > -1 || data.substr(data.length - 1) == '='){
+			   //you've got empty values
+			   console.log("You've got empty values");
+			}else{
 				$("#g-recaptcha-error").html("Please verify you are human").hide();
 				$("#register_submit").button('loading');
-				var data = $(this).serialize();
 				var url = $(this).attr('action');
-				console.log(data);
 				$.ajax({
 					type:  	  'post',
 					url:   	  url,
@@ -126,6 +130,14 @@
 						$("#resend_error").html('An error occurred. Please contact the system admin');
 					}
 				});
+			}
+			evt.preventDefault();
+		});
+
+		$("#r_phone").blur(function(){
+			var phone = $(this).val();
+			if(phone.indexOf("0") == 0){
+				$(this).val(phone.substr(1));
 			}
 		});
 

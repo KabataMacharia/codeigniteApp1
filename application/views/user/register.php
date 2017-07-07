@@ -48,7 +48,7 @@
 							<input type="text" name="phone_pref" id="phone-pref" class="form-control" value="<?php echo set_value('phone-pref'); ?>" readonly>
 						</div>
 						<div class="col-xs-9">
-							<input type="text" name="phone" class="form-control" value="<?php echo set_value('phone'); ?>" data-parsley-required>
+							<input type="text" id="r_phone" name="phone" class="form-control" value="<?php echo set_value('phone'); ?>" placeholder="712345678" data-parsley-required>
 						</div>
 					</div>
 					<?php echo form_error('phone','<span class="help-block1">','</span>'); ?>
