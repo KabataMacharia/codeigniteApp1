@@ -314,7 +314,7 @@
 			var data = $(this).serialize();
 			if(data.indexOf('=&') > -1 || data.substr(data.length - 1) == '='){
 			   //you've got empty values
-			}else{
+			}else if($(this).parsley().isValid()){
 				$("#reset_submit").button('loading');
 				var url  = $(this).attr('action');
 				$.ajax({

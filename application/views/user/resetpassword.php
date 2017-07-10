@@ -15,7 +15,7 @@ $csrf = [
 				<legend>Enter your new password</legend>
 				<div class="form-group">
 					<label>New password</label>
-					<input type="password" name="password" id="password" class="form-control" data-parsley-required>
+					<input type="password" name="password" id="password" class="form-control" data-parsley-required data-parsley-minlength="6">
 				</div>
 				<div class="form-group">
 					<label>Confirm new password</label>
