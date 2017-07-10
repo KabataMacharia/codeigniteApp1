@@ -23,8 +23,9 @@
 					<?php echo form_error('lastname','<span class="help-block1">','</span>'); ?>
 				</div>
 				<div class="form-group">
-					<label>Email</label>
-					<input type="email" name="email" class="form-control" value="<?php echo set_value('email'); ?>" data-parsley-required data-parsley-type="email">
+					<label>Email<span id="email-verify" style="margin-left: 10px;"></i></span></label>
+					<input type="email" name="email" class="form-control" value="<?php echo set_value('email'); ?>" data-parsley-required data-parsley-type="email" id="email_input">
+					<span class="help-block1 email_error"></span>
 					<?php echo form_error('email','<span class="help-block1">','</span>'); ?>
 				</div>
 				<div class="form-group">
@@ -42,13 +43,14 @@
 					<?php echo form_error('country','<span class="help-block1">','</span>'); ?>
 				</div>
 				<div class="form-group">
-					<label>Phone number</label>
+					<label>Phone number<span id="phone-verify" style="margin-left: 10px;"></span></label>
 					<div class="row">
 						<div class="col-xs-3">
 							<input type="text" name="phone_pref" id="phone-pref" class="form-control" value="<?php echo set_value('phone-pref'); ?>" readonly>
 						</div>
 						<div class="col-xs-9">
 							<input type="text" id="r_phone" name="phone" class="form-control" value="<?php echo set_value('phone'); ?>" placeholder="712345678" data-parsley-required>
+							<span class="help-block1 phone_error"></span>
 						</div>
 					</div>
 					<?php echo form_error('phone','<span class="help-block1">','</span>'); ?>

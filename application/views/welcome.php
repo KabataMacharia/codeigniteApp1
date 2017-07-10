@@ -16,12 +16,4 @@ $this->load->view('templates/header');
 	</div>
 </div>
 
-
 <?php $this->load->view('templates/footer'); ?>
-
-
-<!--
-Ensure unique email
-Add parsley validation to register
-Change ajax url to use form action
--->

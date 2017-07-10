@@ -26,12 +26,75 @@
 			});
 		});
 
-		$("#country_select").on("select2:unselect", function(){
-			$("#phone-pref").val('');
-		});
-
 		$(".select2").click(function(){
 			$(".select2-container--default .select2-selection--single").removeClass("select-error");
+		});
+
+		$("#email_input").blur(function(){
+			if($(this).val() !== ''){
+				$("#email-verify").html('<i class="fa fa-spinner fa-pulse fa-fw">');
+				var data = {
+					'email':$(this).val(),
+					'csrf_test_name': $('input[name=csrf_test_name]').val()
+				};
+				var url = '<?php echo base_url('email-check');?>';
+				$.ajax({
+					type:   'post',
+					data:   data,
+					url:    url,
+					success:function(data){
+						var dataObj = JSON.parse(data);
+						if(dataObj.error !== ''){
+							$(".email_error").html(dataObj.error);
+							$("#email-verify").hide();
+						}else{
+							$(".email_error").html('');
+							$("#email-verify").html('<i class="fa fa-check"></i>').show();
+						}
+					}
+				});
+			}else{
+				$(".email_error").html('');
+				$("#email-verify").html('');
+			}
+		});
+
+		$("#r_phone").blur(function(){
+			var phone = $(this).val();
+			if(phone.indexOf("0") == 0){
+				$(this).val(phone.substr(1));
+			}
+			
+			if($(this).val() !== ''){
+				if($("#phone-pref").val() !== ''){
+					$("#phone-verify").html('<i class="fa fa-spinner fa-pulse fa-fw"></i>');
+					var data = {
+						'phone':$("#phone-pref").val()+$(this).val(),
+						'csrf_test_name': $('input[name=csrf_test_name]').val()
+					};
+					var url = '<?php echo base_url('phone-check');?>';
+					$.ajax({
+						type:   'post',
+						data:   data,
+						url:    url,
+						success:function(data){
+							if(data !== ''){
+								var dataObj = JSON.parse(data);
+								if(dataObj.error !== ''){
+									$(".phone_error").html(dataObj.error);
+									$("#phone-verify").hide();
+								}else{
+									$(".phone_error").html('');
+									$("#phone-verify").html('<i class="fa fa-check"></i>').show();
+								}
+							}
+						}
+					});
+				}
+			}else{
+				$(".phone_error").html('');
+				$(".phone-verify").html('');
+			}
 		});
 
 		$(document).on("submit", "#login_form", function(e){
@@ -54,7 +117,7 @@
 							    $(".login-error").fadeOut().slideUp(500, function(){
 							        $(this).hide(); 
 							    });
-							}, 3000);
+							}, 5000);
 							$("#login_submit").button('reset');
 						}
 						if('page' in dataObj){
@@ -70,7 +133,7 @@
 							    $(".login-error").fadeOut().slideUp(500, function(){
 							        $(this).hide(); 
 							    });
-							}, 3000);
+							}, 5000);
 						$("#login_submit").button('reset');
 					}
 				});
@@ -79,38 +142,46 @@
 		});
 
 		$(document).on('submit', '#otp_form', function(e){
-			$("#otp_submit").button("loading");
-			var url = $('#otp_form').attr('action');
-			$.ajax({
-				type: 	  "POST",
-				url: 	  url,
-				data: 	  $("#otp_form").serialize(),
-				success:  function(data){
-					var dataObj = JSON.parse(data);
-					if('error' in dataObj){
-						$('.resend_error').html('<strong>Error:</strong> '+dataObj.error).fadeIn();
+			if($("input[name=otp]").val() == ''){
+				$(".otp-box .help-block1").html("This field is required");
+			}else{
+				$("#otp_submit").button("loading");
+				var url = $('#otp_form').attr('action');
+				$.ajax({
+					type: 	  "POST",
+					url: 	  url,
+					data: 	  $("#otp_form").serialize(),
+					success:  function(data){
+						var dataObj = JSON.parse(data);
+						if('error' in dataObj){
+							$('.resend_error').html('<strong>Error:</strong> '+dataObj.error).fadeIn();
+							window.setTimeout(function() {
+								    $(".resend_error").fadeOut().slideUp(500, function(){
+								        $(this).hide(); 
+								    });
+								}, 5000);
+							$("#otp_submit").button('reset');
+						}
+						if('success' in dataObj){
+							window.location.replace(dataObj.redirect);
+						}
+					},
+					error:  function(jqxhr, error){
+						$('.resend_error').html('An error occurred. Please try again.').fadeIn();
 						window.setTimeout(function() {
-							    $(".resend_error").fadeOut().slideUp(500, function(){
-							        $(this).hide(); 
-							    });
-							}, 3000);
+								    $(".resend_error").fadeOut().slideUp(500, function(){
+								        $(this).hide(); 
+								    });
+								}, 5000);
 						$("#otp_submit").button('reset');
-					}
-					if('success' in dataObj){
-						window.location.replace(dataObj.redirect);
-					}
-				},
-				error:  function(jqxhr, error){
-					$('.resend_error').html('An error occurred. Please try again.').fadeIn();
-					window.setTimeout(function() {
-							    $(".resend_error").fadeOut().slideUp(500, function(){
-							        $(this).hide(); 
-							    });
-							}, 3000);
-					$("#otp_submit").button('reset');
-				} 
-			});
+					} 
+				});
+			}
 			e.preventDefault();
+		});
+
+		$(document).on('keyup', '#otp_code_input', function(e){
+			$(".otp-box .help-block1").html("");
 		});
 
 		$("#register_form").submit(function(evt){
@@ -126,7 +197,7 @@
 			   //you've got empty values
 			   console.log("You've got empty values");
 			}else if($(this).parsley().isValid()){
-				$("#g-recaptcha-error").html("Please verify you are human").hide();
+				$("#g-recaptcha-error").hide();
 				$("#register_submit").button('loading');
 				var url = $(this).attr('action');
 				$.ajax({
@@ -141,7 +212,7 @@
 							    $(".reg-error").fadeOut().slideUp(500, function(){
 							        $(this).hide(); 
 							    });
-							}, 3000);
+							}, 5000);
 							$("#register_submit").button('reset');
 						}else{
 							$('.reg-error').hide();
@@ -151,7 +222,7 @@
 							    $(".reg-success").fadeOut().slideUp(500, function(){
 							        $(this).hide(); 
 							    });
-							}, 3000);
+							}, 5000);
 							$('.login-wrapper').show();
 						}
 					},
@@ -163,13 +234,6 @@
 				});
 			}
 			evt.preventDefault();
-		});
-
-		$("#r_phone").blur(function(){
-			var phone = $(this).val();
-			if(phone.indexOf("0") == 0){
-				$(this).val(phone.substr(1));
-			}
 		});
 
 		$(document).on('click', '#resend_code', function(){

@@ -59,9 +59,12 @@ $route['login']['post'] = 'users/login';
 $route['otp'] = 'users/otp';
 $route['logout']= 'users/logout';
 
-$route['register'] = 'users/register';
+$route['register']['get'] = 'users/get_register';
+$route['register']['post'] = 'users/register';
 
 $route['resend-code'] = 'users/resend_code';
+$route['email-check']['post'] = 'users/check_email';
+$route['phone-check']['post'] = 'users/check_phone';
 
 $route['forgot-password'] = 'users/forgot_password';
 $route['reset-password/(:any)'] = 'users/get_reset_password/$1';

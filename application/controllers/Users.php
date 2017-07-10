@@ -83,8 +83,9 @@ class Users extends CI_Controller
 	public function get_register(){
 		$data = array();
 
-		//$data['user'] = $user_data;
+		$countries = file_get_contents('https://restcountries.eu/rest/v2/all');
 		$data['title'] = 'Register';
+		$data['countries'] = json_decode($countries);
 
 		$this->load->view('user/register', $data);
 	}
@@ -97,18 +98,10 @@ class Users extends CI_Controller
 			$this->form_validation->set_rules('firstname', 'First name', 'required');
 			$this->form_validation->set_rules('lastname', 'Last name', 'required');
 			$this->form_validation->set_rules('email', 'Email', 'required|valid_email|is_unique[users.email]', ['is_unique'=>'The email address already exists']);
-			$this->form_validation->set_rules('phone', 'Phone number', 'required|is_unique[users.phone]', ['is_unique'=>'The phone number already exists']);
+			$this->form_validation->set_rules('phone', 'Phone number', 'required|is_unique[users.phone]');
 			$this->form_validation->set_rules('password', 'password', 'required');
 			$this->form_validation->set_rules('password_confirm', 'Confirm Password', 'required|matches[password]');
 			$this->form_validation->set_rules('g-recaptcha-response', 'Verify you are human', 'required');
-
-			$g_recaptcha = $this->input->post('g-recaptcha-response');
-			$g_response = file_get_contents("https://www.google.com/recaptcha/api/siteverify?secret=6Lce-icUAAAAAKu6EP4tKa3_bfIk1JN1QewmR8LJ&response=$g_recaptcha");
-			$g_response = json_decode($g_response, true);
-			if($g_response["success"] !== true){
-				echo json_encode(['error'=>'Verify that you are human']);
-				return;
-			}
 
 			$user_data = array(
 				'firstname' => strip_tags($this->input->post('firstname')),
@@ -119,6 +112,20 @@ class Users extends CI_Controller
 			);
 
 			if($this->form_validation->run() == true){
+
+				if($this->user->check_phone($user_data['phone'])){
+					echo json_encode(['error'=>'The phone number already exists']);
+					return;
+				}
+
+				$g_recaptcha = $this->input->post('g-recaptcha-response');
+				$g_response = file_get_contents("https://www.google.com/recaptcha/api/siteverify?secret=6Lce-icUAAAAAKu6EP4tKa3_bfIk1JN1QewmR8LJ&response=$g_recaptcha");
+				$g_response = json_decode($g_response, true);
+				if($g_response["success"] !== true){
+					echo json_encode(['error'=>'Verify that you are human']);
+					return;
+				}
+
 				$insert = $this->user->create($user_data);
 				if($insert){
 					//$this->session->set_userdata('success', 'Registration Successful');
@@ -132,6 +139,9 @@ class Users extends CI_Controller
 				} else{
 					echo json_encode(['error' => 'A problem occurred. Please try again']);
 				}
+			}else{
+				echo json_encode(['error'=>validation_errors()]);
+				return;
 			}
 		}
 
@@ -164,7 +174,8 @@ class Users extends CI_Controller
 				<form action="'.base_url('otp').'" method="post" id="otp_form">
 					<div class="form-group">
 						<label>A code has been sent to your phone number. Enter it below.</label>
-						<input type="text" name="otp" class="form-control">
+						<input type="text" name="otp" class="form-control" id="otp_code_input">
+						<span class="help-block1"></span>
 					</div>
 					<button type="submit" id="otp_submit" data-loading-text="'.$btn_text.'" class="btn btn-primary btn-block btn-raised" autocomplete="off">
 					  Verify
@@ -350,6 +361,26 @@ class Users extends CI_Controller
 				}else{
 					echo json_encode(['error'=>'Invalid password reset token']);
 				}
+			}
+		}
+	}
+
+	public function check_email(){
+		$this->form_validation->set_rules('email', 'Email', 'required|valid_email|is_unique[users.email]', ['is_unique'=>'The email address already exists']);
+		if($this->form_validation->run() !== true){
+			echo json_encode(['error'=>validation_errors()]);
+		}else{
+			echo json_encode(['error'=>'']);
+		}
+	}
+
+	public function check_phone(){
+		$this->form_validation->set_rules('phone', 'phone', 'required');
+		if($this->form_validation->run() == true){
+			if($this->user->check_phone($this->input->post('phone'))){
+				echo json_encode(['error'=>'The phone number already exists']);
+			}else{
+				echo json_encode(['error'=>'']);
 			}
 		}
 	}

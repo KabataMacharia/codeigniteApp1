@@ -23,7 +23,14 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 | a PHP script and you can easily do that on your own.
 |
 */
-$config['base_url'] = 'http://localhost/codeApp1';
+$_REAL_SCRIPT_DIR = realpath(dirname($_SERVER['SCRIPT_FILENAME']));
+$_REAL_BASE_DIR = realpath(dirname(__FILE__));
+$_MY_PATH_PART = substr( $_REAL_SCRIPT_DIR, strlen($_REAL_BASE_DIR));
+
+$INSTALLATION_PATH = $_MY_PATH_PART
+    ? substr( dirname($_SERVER['SCRIPT_NAME']), 0, -strlen($_MY_PATH_PART) )
+    : dirname($_SERVER['SCRIPT_NAME']);
+$config['base_url'] = $_SERVER['REQUEST_SCHEME'].'://'.$_SERVER['HTTP_HOST'].$INSTALLATION_PATH;
 
 /*
 |--------------------------------------------------------------------------

@@ -98,4 +98,13 @@ class User extends CI_Model
 	public function create_remember_me_token($email, $token){
 		$this->db->update($this->table, ['remember_me'=>$token], ['email'=>$email]);
 	}
+
+	public function check_phone($phone){
+		$query = $this->db->get_where($this->table, ['phone'=>$phone]);
+		if($query->row()){
+			return true;
+		} else{
+			return false;
+		}
+	}
 }
